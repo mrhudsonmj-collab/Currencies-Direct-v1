@@ -42,7 +42,7 @@ button{border:0;border-radius:17px;background:var(--blue);color:#06243a;font-siz
 <label>Current market rate — £1 = SAR</label>
 <input id="market" type="number" inputmode="decimal" step="0.0001" value="5.0189">
 <button id="liveBtn">Update Live Rate</button>
-<p class="hint" id="liveStatus">You can also type the current rate manually.</p>
+<p class="hint" id="liveStatus">You can also type the current rate manually. This rate is included in the comparison.</p>
 </section>
 
 <section class="card">
@@ -67,20 +67,20 @@ button{border:0;border-radius:17px;background:var(--blue);color:#06243a;font-siz
 <section class="winner" id="winner">
 <span class="pill" id="pill">Compare rates</span>
 <h2 id="headline">Enter your rates</h2>
-<p id="summary">The app will show which option gives you the most pounds.</p>
+<p id="summary">The live market rate is included as a conversion option, alongside your preferential rate and Currencies Direct.</p>
 </section>
 
 <section class="card rows">
 <div class="row"><span>Preferential rate gives you</span><b id="prefOut">—</b></div>
 <div class="row"><span>Currencies Direct gives you</span><b id="cdOut">—</b></div>
-<div class="row"><span>Bank-to-bank gives you</span><b id="bankOut">—</b></div>
+<div class="row"><span>Live market / bank-to-bank gives you</span><b id="bankOut">—</b></div>
 <div class="row"><span>Best vs next best</span><b id="diffOut">—</b></div>
 <div class="row"><span>Best-rate advantage</span><b id="pctOut">—</b></div>
 </section>
 
 <section class="card">
 <div class="actions"><button id="compareBtn">Compare Rates</button><button class="secondary" id="clearBtn">Clear Amount</button></div>
-<p class="note">Bank-to-bank uses the live market rate adjusted by any markup and fee you enter. Your bank's actual conversion quote is the final check, because banks may use a different exchange rate from the live reference rate.</p>
+<p class="note">The live market rate IS included in the comparison. Bank-to-bank starts from that live rate, then adjusts it only if you enter a bank markup or fee. Your bank's actual conversion quote is the final check, because banks may use a different exchange rate from the live reference rate.</p>
 </section>
 </main>
 <script>
@@ -94,13 +94,14 @@ function calc(){
  const cdGBP=cd?amount*cd:null;
  const effectiveBankRate=market*(1+markup/100);
  const bankGBP=effectiveBankRate?Math.max(0,amount/effectiveBankRate-fee):null;
+ const rawLiveGBP=market?amount/market:null;
  $('prefOut').textContent=prefGBP!==null?money(prefGBP):'—';
  $('cdOut').textContent=cdGBP!==null?money(cdGBP):'Enter rate';
  $('bankOut').textContent=bankGBP!==null?money(bankGBP):'—';
  let opts=[];
  if(prefGBP!==null)opts.push({name:'Preferential rate',v:prefGBP});
  if(cdGBP!==null)opts.push({name:'Currencies Direct',v:cdGBP});
- if(bankGBP!==null)opts.push({name:'Bank-to-bank',v:bankGBP});
+ if(bankGBP!==null)opts.push({name:'Live market / bank-to-bank',v:bankGBP});
  if(opts.length<2){$('headline').textContent='Enter your rates';return}
  opts.sort((a,b)=>b.v-a.v);
  const best=opts[0], next=opts[1], diff=best.v-next.v, pct=next.v?diff/next.v*100:0;
@@ -117,7 +118,7 @@ async function live(){
   const d=await r.json(); if(!d.rates?.GBP) throw Error();
   const sarPerGBP=1/d.rates.GBP;
   $('market').value=sarPerGBP.toFixed(4);
-  $('liveStatus').textContent='Live market rate updated. Bank-to-bank comparison recalculated.';
+  $('liveStatus').textContent='Live rate updated and INCLUDED in the comparison below.';
   calc();
  }catch(e){$('liveStatus').textContent='Could not load the live rate. You can enter it manually.'}
  finally{$('liveBtn').disabled=false;$('liveBtn').textContent='Update Live Rate'}
