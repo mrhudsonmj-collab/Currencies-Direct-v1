@@ -1,132 +1,20 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b1322">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SAR GBP">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png">
-<title>SAR → GBP Comparator</title>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b1322"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.webmanifest"><title>SAR GBP Comparator</title>
 <style>
-:root{--bg:#0b1322;--card:#101a2b;--line:#2c3a52;--text:#f5f7fb;--muted:#b8c1d1;--blue:#39b7ee;--green:#75e6a1;--greenbg:#0e302d;--red:#ff9c9c}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
-main{max-width:760px;margin:auto;padding:calc(30px + env(safe-area-inset-top)) 18px calc(38px + env(safe-area-inset-bottom))}
-h1{font-size:39px;line-height:1.04;margin:0 0 16px}.lead{font-size:21px;line-height:1.5;color:#d8deea;margin:0 0 22px}
-.status,.card,.winner{border-radius:22px;border:1px solid var(--line);padding:22px;margin:18px 0}.status{background:#0d2929;border-color:#2d7654;color:#86edaa;font-size:18px}
-label{display:block;font-size:20px;font-weight:800;margin-bottom:10px}input,.fake{width:100%;border-radius:17px;border:3px solid #7b879b;background:#f6f7f9;color:#111827;padding:18px 16px;font-size:28px;font-weight:700;min-height:70px}
-.fake{background:#89909b;color:#142035}.hint{color:#c5cddd;font-size:17px;line-height:1.45;margin:13px 0 0}.card>div+div{margin-top:20px}
-button{border:0;border-radius:17px;background:var(--blue);color:#06243a;font-size:21px;font-weight:800;padding:18px;width:100%;margin-top:14px}
-.winner{background:var(--greenbg);border-color:#286949}.pill{display:inline-block;background:#104d3c;color:var(--green);font-weight:800;border-radius:999px;padding:7px 12px}.winner h2{font-size:31px;margin:12px 0 8px}.winner p{font-size:21px;color:#d9e3ea;line-height:1.45;margin:0}
-.rows{padding:6px 22px}.row{display:flex;justify-content:space-between;gap:14px;padding:17px 0;border-bottom:1px solid var(--line);font-size:18px;color:var(--muted)}.row:last-child{border-bottom:0}.row b{color:var(--text);white-space:nowrap}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}.secondary{background:#263753;color:white}
-.note{font-size:16px;color:#cbd3e0;line-height:1.55}.bankbox{border-left:4px solid var(--blue);padding-left:14px}
-@media(max-width:520px){h1{font-size:34px}.lead{font-size:19px}.card{padding:18px}label{font-size:18px}.actions{grid-template-columns:1fr 1fr}}
-</style>
-</head>
-<body>
-<main>
-<h1>SAR → GBP<br>Comparator</h1>
-<p class="lead">See the live market rate, then compare your wage-slip preferential rate, Currencies Direct and a bank-to-bank conversion.</p>
-<div class="status">App is active — calculator ready.</div>
-
-<section class="card">
-<label>Amount in Saudi Riyals (SAR)</label>
-<input id="amount" type="number" inputmode="decimal" value="33849">
-<div><label>Conversion</label><div class="fake">SAR → GBP</div></div>
-</section>
-
-<section class="card">
-<label>Current market rate — £1 = SAR</label>
-<input id="market" type="number" inputmode="decimal" step="0.0001" value="5.0189">
-<button id="liveBtn">Update Live Rate</button>
-<p class="hint" id="liveStatus">You can also type the current rate manually. This rate is included in the comparison.</p>
-</section>
-
-<section class="card">
-<label>Currencies Direct — 1 SAR = GBP</label>
-<input id="cd" type="number" inputmode="decimal" step="0.0001" placeholder=".1978">
-<p class="hint">Enter the actual rate shown by Currencies Direct.</p>
-</section>
-
-<section class="card">
-<label>Your wage-slip preferential rate — £1 = SAR</label>
-<input id="pref" type="number" inputmode="decimal" step="0.0001" value="5.0761">
-<p class="hint">Saved automatically on this device.</p>
-</section>
-
-<section class="card bankbox">
-<label>Bank-to-bank adjustment (optional)</label>
-<div><label style="font-size:16px">Bank exchange-rate markup (%)</label><input id="markup" type="number" inputmode="decimal" value="0" step="0.01"></div>
-<div><label style="font-size:16px">Bank / transfer fee (£)</label><input id="fee" type="number" inputmode="decimal" value="0" step="0.01"></div>
-<p class="hint">If your bank gives you the live market rate with no fee, leave both at 0. If it applies a markup or fee, enter it here.</p>
-</section>
-
-<section class="winner" id="winner">
-<span class="pill" id="pill">Compare rates</span>
-<h2 id="headline">Enter your rates</h2>
-<p id="summary">The live market rate is included as a conversion option, alongside your preferential rate and Currencies Direct.</p>
-</section>
-
-<section class="card rows">
-<div class="row"><span>Preferential rate gives you</span><b id="prefOut">—</b></div>
-<div class="row"><span>Currencies Direct gives you</span><b id="cdOut">—</b></div>
-<div class="row"><span>Live market / bank-to-bank gives you</span><b id="bankOut">—</b></div>
-<div class="row"><span>Best vs next best</span><b id="diffOut">—</b></div>
-<div class="row"><span>Best-rate advantage</span><b id="pctOut">—</b></div>
-</section>
-
-<section class="card">
-<div class="actions"><button id="compareBtn">Compare Rates</button><button class="secondary" id="clearBtn">Clear Amount</button></div>
-<p class="note">The live market rate IS included in the comparison. Bank-to-bank starts from that live rate, then adjusts it only if you enter a bank markup or fee. Your bank's actual conversion quote is the final check, because banks may use a different exchange rate from the live reference rate.</p>
-</section>
-</main>
+:root{--bg:#0b1322;--card:#101a2b;--line:#2d3b53;--text:#f7f9fc;--muted:#b9c3d4;--blue:#39b8ef;--green:#79e6a1;--greenbg:#0d302c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}main{max-width:760px;margin:auto;padding:calc(30px + env(safe-area-inset-top)) 18px 42px}h1{font-size:38px;margin:0 0 12px}.lead{font-size:20px;line-height:1.5;color:#d9dfeb}.card,.status,.winner{border:1px solid var(--line);border-radius:22px;padding:21px;margin:18px 0}.status{background:#0d2929;border-color:#2c7352;color:#87e9a7;font-size:18px}label{display:block;font-size:19px;font-weight:800;margin-bottom:10px}input{width:100%;border-radius:17px;border:3px solid #7d899c;background:#f6f7f9;color:#111827;padding:17px 16px;font-size:27px;font-weight:750}.hint{color:#c5cede;font-size:16px;line-height:1.5}.card>div+div{margin-top:18px}button{border:0;border-radius:17px;background:var(--blue);color:#06243a;font-size:20px;font-weight:850;padding:17px;width:100%;margin-top:13px}.secondary{background:#263753;color:white}.winner{background:var(--greenbg);border-color:#286a49}.pill,.badge{display:inline-block;border-radius:999px;padding:6px 10px;font-weight:850}.pill{background:#104d3c;color:var(--green)}.badge{font-size:12px;background:#55451d;color:#ffe39a}.guaranteed{background:#254a37;color:#9af1b7}.winner h2{font-size:30px;margin:11px 0 5px}.bigmoney{font-size:38px;font-weight:900}.winner p{font-size:19px;color:#dce5eb}.rows{padding:6px 21px}.row{display:flex;justify-content:space-between;gap:12px;padding:16px 0;border-bottom:1px solid var(--line);font-size:17px;color:var(--muted)}.row:last-child{border:0}.row b{color:var(--text);white-space:nowrap}.target{font-size:29px;font-weight:900}.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+</style></head><body><main>
+<h1>SAR → GBP<br>Comparator</h1><p class="lead">Which route gives you the most pounds right now?</p><div class="status" id="status">Fetching live rate…</div>
+<section class="card"><label>Amount in Saudi Riyals (SAR)</label><input id="amount" type="number" inputmode="decimal" value="33849"></section>
+<section class="card"><label>Live market rate <span class="badge">VARIABLE</span> — £1 = SAR</label><input id="market" type="number" inputmode="decimal" step=".0001"><button id="liveBtn">Update Live Rate</button><p class="hint" id="liveStatus">Automatically updates when the app opens.</p></section>
+<section class="card"><label>Wage-slip preferential rate <span class="badge guaranteed">GUARANTEED</span> — £1 = SAR</label><input id="pref" type="number" inputmode="decimal" step=".0001" value="5.0761"><p class="hint">Saved automatically.</p></section>
+<section class="card"><label>Currencies Direct — 1 SAR = GBP</label><input id="cd" type="number" inputmode="decimal" step=".0001" placeholder=".1978"><p class="hint">Enter the actual rate offered by Currencies Direct.</p></section>
+<section class="card"><label>Bank-to-bank costs (optional)</label><div><label>Exchange-rate markup (%)</label><input id="markup" type="number" inputmode="decimal" value="0" step=".01"></div><div><label>Bank / transfer fee (£)</label><input id="fee" type="number" inputmode="decimal" value="0" step=".01"></div><p class="hint">Leave both at 0 if your bank gives you the live rate without charges.</p></section>
+<section class="winner"><span class="pill" id="pill">Checking rates</span><h2 id="headline">Finding best option…</h2><div class="bigmoney" id="bestMoney">—</div><p id="summary"></p><p id="extra"></p></section>
+<section class="card rows"><div class="row"><span>Preferential</span><b id="prefOut">—</b></div><div class="row"><span>Currencies Direct</span><b id="cdOut">Enter rate</b></div><div class="row"><span>Bank-to-bank (live)</span><b id="bankOut">—</b></div><div class="row"><span>Best vs next best</span><b id="diffOut">—</b></div></section>
+<section class="card"><label>Bank-to-bank break-even</label><div class="target" id="target">—</div><p class="hint" id="targetMsg"></p></section>
+<section class="card"><div class="actions"><button id="compareBtn">Compare Rates</button><button class="secondary" id="copyBtn">Copy Result</button></div><button class="secondary" id="clearBtn">Clear Amount</button><p class="hint">Your bank's actual quote is the final check because its exchange rate may differ from the live reference rate.</p></section>
 <script>
-const $=id=>document.getElementById(id);
-const money=n=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(n);
-function save(){localStorage.setItem('prefRate',$('pref').value)}
-function calc(){
- const amount=+$('amount').value||0, market=+$('market').value||0, cd=+$('cd').value||0, pref=+$('pref').value||0;
- const markup=+$('markup').value||0, fee=+$('fee').value||0;
- const prefGBP=pref?amount/pref:null;
- const cdGBP=cd?amount*cd:null;
- const effectiveBankRate=market*(1+markup/100);
- const bankGBP=effectiveBankRate?Math.max(0,amount/effectiveBankRate-fee):null;
- const rawLiveGBP=market?amount/market:null;
- $('prefOut').textContent=prefGBP!==null?money(prefGBP):'—';
- $('cdOut').textContent=cdGBP!==null?money(cdGBP):'Enter rate';
- $('bankOut').textContent=bankGBP!==null?money(bankGBP):'—';
- let opts=[];
- if(prefGBP!==null)opts.push({name:'Preferential rate',v:prefGBP});
- if(cdGBP!==null)opts.push({name:'Currencies Direct',v:cdGBP});
- if(bankGBP!==null)opts.push({name:'Live market / bank-to-bank',v:bankGBP});
- if(opts.length<2){$('headline').textContent='Enter your rates';return}
- opts.sort((a,b)=>b.v-a.v);
- const best=opts[0], next=opts[1], diff=best.v-next.v, pct=next.v?diff/next.v*100:0;
- $('pill').textContent=best.name+' wins';
- $('headline').textContent=best.name+' is better';
- $('summary').textContent=`You receive ${money(diff)} more than the next-best option.`;
- $('diffOut').textContent=money(diff);
- $('pctOut').textContent=pct.toFixed(3)+'%';
-}
-async function live(){
- $('liveBtn').disabled=true;$('liveBtn').textContent='Updating…';
- try{
-  const r=await fetch('https://open.er-api.com/v6/latest/SAR',{cache:'no-store'});
-  const d=await r.json(); if(!d.rates?.GBP) throw Error();
-  const sarPerGBP=1/d.rates.GBP;
-  $('market').value=sarPerGBP.toFixed(4);
-  $('liveStatus').textContent='Live rate updated and INCLUDED in the comparison below.';
-  calc();
- }catch(e){$('liveStatus').textContent='Could not load the live rate. You can enter it manually.'}
- finally{$('liveBtn').disabled=false;$('liveBtn').textContent='Update Live Rate'}
-}
-$('pref').value=localStorage.getItem('prefRate')||$('pref').value;
-['amount','market','cd','pref','markup','fee'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='pref')save();calc()}));
-$('liveBtn').onclick=live;$('compareBtn').onclick=calc;$('clearBtn').onclick=()=>{$('amount').value='';calc()};
-calc();
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script>
-</body></html>
+const $=x=>document.getElementById(x),money=n=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(n);let last='';
+function calc(){let a=+$('amount').value||0,m=+$('market').value||0,p=+$('pref').value||0,c=+$('cd').value||0,mu=+$('markup').value||0,f=+$('fee').value||0;localStorage.setItem('pref',p);localStorage.setItem('mu',mu);localStorage.setItem('fee',f);let pg=p?a/p:null,cg=c?a*c:null,bg=m?Math.max(0,a/(m*(1+mu/100))-f):null;$('prefOut').textContent=pg!=null?money(pg):'—';$('cdOut').textContent=cg!=null?money(cg):'Enter rate';$('bankOut').textContent=bg!=null?money(bg):'—';let target=p&&a?a/(((a/p)+f)*(1+mu/100)):null;$('target').textContent=target?target.toFixed(4)+' SAR per £1':'—';if(target&&m)$('targetMsg').textContent=m<target?'Live rate is below the target — bank-to-bank beats your guaranteed rate after entered costs.':'Live rate is above the target — your guaranteed rate beats bank-to-bank after entered costs.';let o=[];if(pg!=null)o.push(['Preferential rate',pg]);if(cg!=null)o.push(['Currencies Direct',cg]);if(bg!=null)o.push(['Bank-to-bank',bg]);if(o.length<2)return;o.sort((x,y)=>y[1]-x[1]);let d=o[0][1]-o[1][1];$('pill').textContent=o[0][0]+' wins';$('headline').textContent='Use '+o[0][0];$('bestMoney').textContent=money(o[0][1]);$('summary').textContent='You get '+money(d)+' more than '+o[1][0]+'.';$('extra').textContent=o.length===3?'That is '+money(o[0][1]-o[2][1])+' more than '+o[2][0]+'.':'';$('diffOut').textContent=money(d);last=`SAR → GBP comparison\nBest: ${o[0][0]} ${money(o[0][1])}\n${o[1][0]} ${money(o[1][1])}\nDifference ${money(d)}\nLive £1 = ${m.toFixed(4)} SAR`}
+async function live(){$('liveBtn').textContent='Updating…';try{let r=await fetch('https://open.er-api.com/v6/latest/SAR',{cache:'no-store'}),d=await r.json();if(!d.rates?.GBP)throw 0;$('market').value=(1/d.rates.GBP).toFixed(4);let t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});$('status').textContent='Live rate active — updated '+t;$('liveStatus').textContent='Live rate updated '+t+' and included automatically in the comparison.';calc()}catch(e){$('status').textContent='Live update failed — enter the rate manually.'}finally{$('liveBtn').textContent='Update Live Rate'}}
+$('pref').value=localStorage.getItem('pref')||'5.0761';$('markup').value=localStorage.getItem('mu')||'0';$('fee').value=localStorage.getItem('fee')||'0';['amount','market','pref','cd','markup','fee'].forEach(x=>$(x).addEventListener('input',calc));$('liveBtn').onclick=live;$('compareBtn').onclick=calc;$('clearBtn').onclick=()=>{$('amount').value='';calc()};$('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(last);$('copyBtn').textContent='Copied ✓';setTimeout(()=>$('copyBtn').textContent='Copy Result',1200)}catch(e){}};calc();live();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js');
+</script></main></body></html>
